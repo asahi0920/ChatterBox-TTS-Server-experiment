@@ -1,12 +1,12 @@
-# Chatterbox TTS Server: OpenAI-Compatible API with Web UI, Large Text Handling & Built-in Voices
+# Chatterbox TTS サーバー: OpenAI互換API・Web UI・長文対応・内蔵音声付き
 
-**Self-host the powerful [Chatterbox TTS model](https://github.com/resemble-ai/chatterbox) with this enhanced FastAPI server! Features an intuitive Web UI, a flexible API endpoint, voice cloning, large text processing via intelligent chunking, audiobook generation, and consistent, reproducible voices using built-in ready-to-use voices and a generation seed feature.**
+**強力な [Chatterbox TTSモデル](https://github.com/resemble-ai/chatterbox) を FastAPIサーバーでセルフホスト！直感的なWeb UI、柔軟なAPI、音声クローン、長文分割処理、オーディオブック生成、内蔵音声・シード指定による一貫した音声生成が可能です。**
 
-> 🚀 **Try it now!** Test the full TTS server with voice cloning and audiobook generation in Google Colab - no installation required!
+> 🚀 **今すぐ試せます！Google ColabでフルTTSサーバー（音声クローン・オーディオブック生成対応）をインストール不要で体験！**
 > 
 > [![Open Live Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb)
 
-This server is based on the architecture and UI of our [Dia-TTS-Server](https://github.com/devnen/Dia-TTS-Server) project but uses the distinct `chatterbox-tts` engine. Runs accelerated on NVIDIA (CUDA), AMD (ROCm), and Apple Silicon (MPS) GPUs, with a fallback to CPU.
+このサーバーは [Dia-TTS-Server](https://github.com/devnen/Dia-TTS-Server) の設計・UIをベースに、`chatterbox-tts`エンジンを採用しています。NVIDIA (CUDA)、AMD (ROCm)、Apple Silicon (MPS) GPUで高速動作、CPUにも自動対応。
 
 [![Project Link](https://img.shields.io/badge/GitHub-devnen/Chatterbox--TTS--Server-blue?style=for-the-badge&logo=github)](https://github.com/devnen/Chatterbox-TTS-Server)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](LICENSE)
@@ -28,136 +28,133 @@ This server is based on the architecture and UI of our [Dia-TTS-Server](https://
 
 ---
 
-## 🗣️ Overview: Enhanced Chatterbox TTS Generation
+## 🗣️ 概要: 強化されたChatterbox TTS生成
 
-The [Chatterbox TTS model by Resemble AI](https://github.com/resemble-ai/chatterbox) provides capabilities for generating high-quality speech. This project builds upon that foundation by providing a robust [FastAPI](https://fastapi.tiangolo.com/) server that makes Chatterbox significantly easier to use and integrate.
+[Chatterbox TTSモデル（Resemble AI）](https://github.com/resemble-ai/chatterbox) は高品質な音声合成を提供します。本プロジェクトは [FastAPI](https://fastapi.tiangolo.com/) サーバーでChatterboxを簡単に使えるように拡張しています。
 
-**🚀 Want to try it instantly?** [Launch the live demo in Google Colab](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb) - no installation needed!
+**🚀 すぐ試したい方:** [Google Colabデモを起動](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb) すればインストール不要です！
 
-The server expects plain text input for synthesis and we solve the complexity of setting up and running the model by offering:
+サーバーはテキスト入力で音声合成を行い、以下の特徴を持ちます：
 
-*   A **modern Web UI** for easy experimentation, preset loading, reference audio management, and generation parameter tuning.
-*   **Multi-Platform Acceleration:** Full support for **NVIDIA (CUDA)**, **AMD (ROCm)**, and **Apple Silicon (MPS)** GPUs, with an automatic fallback to **CPU**, ensuring you can run on any hardware.
-*   **Large Text Handling:** Intelligently splits long plain text inputs into manageable chunks based on sentence structure, processes them sequentially, and seamlessly concatenates the audio.
-*   **📚 Audiobook Generation:** Perfect for creating complete audiobooks - simply paste an entire book's text and the server automatically processes it into a single, seamless audio file with consistent voice quality throughout.
-*   **Predefined Voices:** Select from curated, ready-to-use synthetic voices for consistent and reliable output without cloning setup.
-*   **Voice Cloning:** Generate speech using a voice similar to an uploaded reference audio file.
-*   **Consistent Generation:** Achieve consistent voice output across multiple generations or text chunks by using the "Predefined Voices" or "Voice Cloning" modes, optionally combined with a fixed integer **Seed**.
-*   **Docker support** for easy, reproducible containerized deployment on any platform.
+*   **モダンなWeb UI** で実験・プリセット・音声管理・パラメータ調整が簡単
+*   **マルチプラットフォーム高速化**: NVIDIA (CUDA)、AMD (ROCm)、Apple Silicon (MPS) GPU対応、自動でCPUにも対応
+*   **長文対応**: 長いテキストを文単位で分割し、順次処理・音声連結
+*   **📚 オーディオブック生成**: 本文全体を貼り付けるだけで一貫した音声のオーディオブックを自動生成
+*   **内蔵音声**: 用意された合成音声を選択可能
+*   **音声クローン**: 参照音声ファイルから声質を再現
+*   **一貫した生成**: 内蔵音声やクローン＋シード指定で安定した音声出力
+*   **Docker対応**: 簡単に再現性のあるコンテナ展開
 
-This server is your gateway to leveraging Chatterbox's TTS capabilities seamlessly, with enhanced stability, voice consistency, and large text support for plain text inputs.
+ChatterboxのTTS機能を安定・高品質・長文対応で活用できます。
 
-## ✨ Key Features of This Server
+## ✨ 主な特徴
 
-**🔥 Live Demo Available:**
-*   **🚀 [One-Click Google Colab Demo](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb):** Try the full server with voice cloning and audiobook generation instantly in your browser - no local installation required!
+**🔥 ライブデモあり:**
+*   **🚀 [ワンクリックGoogle Colabデモ](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb):** ブラウザだけですぐ体験可能
 
-This server application enhances the underlying `chatterbox-tts` engine with the following:
+このサーバーは `chatterbox-tts` エンジンを以下のように拡張しています：
 
-**🚀 Core Functionality:**
+**🚀 コア機能:**
 
-*   **Large Text Processing (Chunking):**
-    *   Automatically handles long plain text inputs by intelligently splitting them into smaller chunks based on sentence boundaries.
-    *   Processes each chunk individually and seamlessly concatenates the resulting audio, overcoming potential generation limits of the TTS engine.
-    *   **Ideal for audiobook generation** - paste entire books and get professional-quality audiobooks with consistent narration.
-    *   Configurable via UI toggle ("Split text into chunks") and chunk size slider.
-*   **Predefined Voices:**
-    *   Allows usage of curated, ready-to-use synthetic voices stored in the `./voices` directory.
-    *   Selectable via UI dropdown ("Predefined Voices" mode).
-    *   Provides reliable voice output without manual cloning setup.
-*   **Voice Cloning:**
-    *   Supports voice cloning using a reference audio file (`.wav` or `.mp3`).
-    *   The server processes the reference audio for the engine.
-*   **Generation Seed:** Added `seed` parameter to UI and API for influencing generation results. Using a fixed integer seed *in combination with* Predefined Voices or Voice Cloning helps maintain consistency.
-*   **API Endpoint (`/tts`):**
-    *   The primary API endpoint, offering fine-grained control over TTS generation.
-    *   Supports parameters for text, voice mode (predefined/clone), reference/predefined voice selection, chunking control (`split_text`, `chunk_size`), generation settings (temperature, exaggeration, CFG weight, seed, speed factor, language), and output format.
-*   **UI Configuration Management:** Added UI section to view/edit `config.yaml` settings (server, model, paths) and save generation defaults.
-*   **Configuration System:** Uses `config.yaml` for all runtime configuration, managed via `config.py` (`YamlConfigManager`). If `config.yaml` is missing, it's created with default values from `config.py`.
-*   **Audio Post-Processing (Optional):** Includes utilities for silence trimming, internal silence reduction, and (if `parselmouth` is installed) unvoiced segment removal to improve audio quality. These are configurable.
-*   **UI State Persistence:** Web UI now saves/restores text input, voice mode selection, file selections, and generation parameters (seed, chunking, sliders) in `config.yaml` (`ui_state` section).
+*   **長文分割処理（チャンク化）:**
+    *   長いテキストを文単位で自動分割し、個別に音声生成・連結
+    *   オーディオブック生成に最適
+    *   UIでON/OFF・チャンクサイズ調整可能
+*   **内蔵音声:**
+    *   `./voices` ディレクトリの合成音声を選択可能
+*   **音声クローン:**
+    *   参照音声ファイル（.wav/.mp3）から声質を再現
+*   **生成シード:**
+    *   シード指定で一貫した音声生成が可能
+*   **APIエンドポイント（/tts）:**
+    *   テキスト・音声モード・参照/内蔵音声・分割制御・生成パラメータ・出力形式など細かく指定可能
+*   **UI設定管理:**
+    *   `config.yaml` の編集・保存がUIから可能
+*   **設定システム:**
+    *   `config.yaml` で全設定を管理。初回起動時に自動生成
+*   **音声後処理（オプション）:**
+    *   無音トリム・内部無音短縮・無声区間除去など（設定可能）
+*   **UI状態保存:**
+    *   テキスト・音声モード・ファイル選択・パラメータ等を `config.yaml` に保存
 
-**🔧 General Enhancements:**
+**🔧 一般的な強化点:**
 
-*   **Performance:** Optimized for speed and efficient VRAM usage on GPU.
-*   **Web Interface:** Modern, responsive UI for plain text input, parameter adjustment, preset loading, reference/predefined audio management, and audio playback.
-*   **Model Loading:** Uses `ChatterboxTTS.from_pretrained()` for robust model loading from Hugging Face Hub, utilizing the standard HF cache.
-*   **Dependency Management:** Clear `requirements.txt`.
-*   **Utilities:** Comprehensive `utils.py` for audio processing, text handling, and file management.
+*   **パフォーマンス:** GPUで高速・省メモリ
+*   **Webインターフェース:** テキスト入力・パラメータ調整・音声管理・再生
+*   **モデルロード:** Hugging Face Hubから自動ダウンロード
+*   **依存管理:** 明確な `requirements.txt`
+*   **ユーティリティ:** 音声・テキスト・ファイル処理用 `utils.py`
 
-## ✅ Features Summary
+## ✅ 機能まとめ
 
-*   **Core Chatterbox Capabilities (via [Resemble AI Chatterbox](https://github.com/resemble-ai/chatterbox)):**
-    *   🗣️ High-quality single-speaker voice synthesis from plain text.
-    *   🎤 Perform voice cloning using reference audio prompts.
-*   **Enhanced Server & API:**
-    *   ⚡ Built with the high-performance **[FastAPI](https://fastapi.tiangolo.com/)** framework.
-    *   ⚙️ **Custom API Endpoint** (`/tts`) as the primary method for programmatic generation, exposing all key parameters.
-    *   📄 Interactive API documentation via Swagger UI (`/docs`).
-    *   🩺 Health check endpoint (`/api/ui/initial-data` also serves as a comprehensive status check).
-*   **Advanced Generation Features:**
-    *   📚 **Large Text Handling:** Intelligently splits long plain text inputs into chunks based on sentences, generates audio for each, and concatenates the results seamlessly. Configurable via `split_text` and `chunk_size`.
-    *   📖 **Audiobook Creation:** Perfect for generating complete audiobooks from full-length texts with consistent voice quality and automatic chapter handling.
-    *   🎤 **Predefined Voices:** Select from curated synthetic voices in the `./voices` directory.
-    *   ✨ **Voice Cloning:** Simple voice cloning using an uploaded reference audio file.
-    *   🌱 **Consistent Generation:** Use Predefined Voices or Voice Cloning modes, optionally with a fixed integer **Seed**, for consistent voice output.
-    *   🔇 **Audio Post-Processing:** Optional automatic steps to trim silence, fix internal pauses, and remove long unvoiced segments/artifacts (configurable via `config.yaml`).
-*   **Intuitive Web User Interface:**
-    *   🖱️ Modern, easy-to-use interface.
-    *   💡 **Presets:** Load example text and settings dynamically from `ui/presets.yaml`.
-    *   🎤 **Reference/Predefined Audio Upload:** Easily upload `.wav`/`.mp3` files.
-    *   🗣️ **Voice Mode Selection:** Choose between Predefined Voices or Voice Cloning.
-    *   🎛️ **Parameter Control:** Adjust generation settings (Temperature, Exaggeration, CFG Weight, Speed Factor, Seed, etc.) via sliders and inputs.
-    *   💾 **Configuration Management:** View and save server settings (`config.yaml`) and default generation parameters directly in the UI.
-    *   💾 **Session Persistence:** Remembers your last used settings via `config.yaml`.
-    *   ✂️ **Chunking Controls:** Enable/disable text splitting and adjust approximate chunk size.
-    *   ⚠️ **Warning Modals:** Optional warnings for chunking voice consistency and general generation quality.
-    *   🌓 **Light/Dark Mode:** Toggle between themes with preference saved locally.
-    *   🔊 **Audio Player:** Integrated waveform player ([WaveSurfer.js](https://wavesurfer.xyz/)) for generated audio with download option.
-    *   ⏳ **Loading Indicator:** Shows status during generation.
-*   **Flexible & Efficient Model Handling:**
-    *   ☁️ Downloads models automatically from [Hugging Face Hub](https://huggingface.co/) using `ChatterboxTTS.from_pretrained()`.
-    *   🔄 Easily specify model repository via `config.yaml`.
-    *   📄 Optional `download_model.py` script available to pre-download specific model components to a local directory (this is separate from the main HF cache used at runtime).
-*   **Performance & Configuration:**
-    *   💻 **GPU Acceleration:** Automatically uses NVIDIA CUDA, Apple MPS, or AMD ROCm if available, falls back to CPU.
-    *   ⚙️ All configuration via `config.yaml`.
-    *   📦 Uses standard Python virtual environments.
-*   **Docker Support:**
-    *   🐳 Containerized deployment via [Docker](https://www.docker.com/) and Docker Compose.
-    *   🔌 NVIDIA GPU acceleration with Container Toolkit integration.
-    *   💾 Persistent volumes for models (HF cache), custom voices, outputs, logs, and config.
-    *   🚀 One-command setup and deployment (`docker compose up -d`).
+*   **Chatterbox本来の機能:**
+    *   🗣️ 高品質な単一話者音声合成
+    *   🎤 参照音声によるクローン
+*   **サーバー・API拡張:**
+    *   ⚡ 高速なFastAPIフレームワーク
+    *   ⚙️ `/tts` APIで細かい制御
+    *   📄 Swagger UIでAPIドキュメント
+    *   🩺 ヘルスチェックエンドポイント
+*   **高度な生成機能:**
+    *   📚 長文分割・連結
+    *   📖 オーディオブック生成
+    *   🎤 内蔵音声・音声クローン
+    *   🌱 シード指定で一貫性
+    *   🔇 音声後処理
+*   **直感的なWeb UI:**
+    *   🖱️ モダンUI
+    *   💡 プリセット
+    *   🎤 音声ファイルアップロード
+    *   🗣️ 音声モード選択
+    *   🎛️ パラメータ調整
+    *   💾 設定保存
+    *   💾 セッション保存
+    *   ✂️ チャンク制御
+    *   ⚠️ 警告モーダル
+    *   🌓 ライト/ダークモード
+    *   🔊 波形プレイヤー
+    *   ⏳ ローディング表示
+*   **柔軟なモデル管理:**
+    *   ☁️ Hugging Face Hubから自動取得
+    *   🔄 モデルリポジトリ指定可
+    *   📄 事前ダウンロード用スクリプトあり
+*   **パフォーマンス・設定:**
+    *   💻 GPU自動判別
+    *   ⚙️ 全設定は `config.yaml` で管理
+    *   📦 標準Python仮想環境
+*   **Docker対応:**
+    *   🐳 Docker・Composeで簡単展開
+    *   🔌 NVIDIA GPU対応
+    *   💾 モデル・音声・出力・ログ・設定を永続化
+    *   🚀 ワンコマンドで起動
 
-## 🔩 System Prerequisites
+## 🔩 システム要件
 
-*   **Operating System:** Windows 10/11 (64-bit) or Linux (Debian/Ubuntu recommended).
-*   **Python:** Version 3.10 or later ([Download](https://www.python.org/downloads/)).
-*   **Git:** For cloning the repository ([Download](https://git-scm.com/downloads)).
-*   **Internet:** For downloading dependencies and models from Hugging Face Hub.
-*   **(Optional but HIGHLY Recommended for Performance):**
-    *   **NVIDIA GPU:** CUDA-compatible (Maxwell architecture or newer). Check [NVIDIA CUDA GPUs](https://developer.nvidia.com/cuda-gpus).
-    *   **NVIDIA Drivers:** Latest version for your GPU/OS ([Download](https://www.nvidia.com/Download/index.aspx)).
-    *   **AMD GPU:** ROCm-compatible (e.g., RX 6000/7000 series). Check [AMD ROCm GPUs](https://rocm.docs.amd.com/en/latest/reference/gpu-arch-specs.html).
-    *   **AMD Drivers:** Latest ROCm-compatible drivers for your GPU/OS.
-    *   **Apple Silicon:** M1, M2, M3, or newer Apple Silicon chips with macOS 12.3+ for MPS acceleration.
-*   **(Linux Only):**
-    *   `libsndfile1`: Audio library needed by `soundfile`. Install via package manager (e.g., `sudo apt install libsndfile1`).
-    *   `ffmpeg`: For robust audio operations (optional but recommended). Install via package manager (e.g., `sudo apt install ffmpeg`).
+*   **OS:** Windows 10/11 (64bit) または Linux (Debian/Ubuntu推奨)
+*   **Python:** 3.10以降 ([ダウンロード](https://www.python.org/downloads/))
+*   **Git:** リポジトリ取得用 ([ダウンロード](https://git-scm.com/downloads))
+*   **インターネット:** 依存・モデル取得用
+*   **(推奨) GPU:**
+    *   **NVIDIA:** CUDA対応 (Maxwell以降)
+    *   **AMD:** ROCm対応 (RX 6000/7000等)
+    *   **Apple Silicon:** M1/M2/M3以降 (macOS 12.3+)
+*   **(Linuxのみ):**
+    *   `libsndfile1`（`sudo apt install libsndfile1`）
+    *   `ffmpeg`（`sudo apt install ffmpeg`）
 
-## 💻 Installation and Setup
+## 💻 インストールとセットアップ
 
-This project uses specific dependency files to ensure a smooth, one-command installation for your hardware. Follow the path that matches your system.
+このプロジェクトはハードウェア別の依存ファイルで簡単インストールできます。
 
-**1. Clone the Repository**
+**1. リポジトリをクローン**
 ```bash
 git clone https://github.com/devnen/Chatterbox-TTS-Server.git
 cd Chatterbox-TTS-Server
 ```
 
-**2. Create a Python Virtual Environment**
+**2. Python仮想環境を作成**
 
-Using a virtual environment is crucial to avoid conflicts with other projects.
+他プロジェクトとの競合を避けるため仮想環境を推奨します。
 
 *   **Windows (PowerShell):**
     ```powershell
@@ -170,635 +167,399 @@ Using a virtual environment is crucial to avoid conflicts with other projects.
     python3 -m venv venv
     source venv/bin/activate
     ```
-    Your command prompt should now start with `(venv)`.
+    プロンプトが `(venv)` で始まればOKです。
 
-**3. Choose Your Installation Path**
+**3. ハードウェアに合わせてインストール**
 
-Pick one of the following commands based on your hardware. This single command will install all necessary dependencies with compatible versions.
+下記から自分の環境に合うコマンドを選んでください。
 
 ---
 
-### **Option 1: CPU-Only Installation**
+### **オプション1: CPUのみ**
 
-This is the most straightforward option and works on any machine without a compatible GPU.
+どのPCでも動作します。
 
 ```bash
-# Make sure your (venv) is active
 pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
 <details>
-<summary><strong>💡 How This Works</strong></summary>
-The `requirements.txt` file is specially crafted for CPU users. It tells `pip` to use PyTorch's CPU-specific package repository and pins compatible versions of `torch` and `torchvision`. This prevents `pip` from installing mismatched versions, which is a common source of errors.
+<summary><strong>💡 これはどう動くか</strong></summary>
+`requirements.txt` はCPUユーザー向けに特別に作成されています。これにより、`pip` はPyTorchのCPU専用パッケージリポジトリを使用し、互換性のある `torch` と `torchvision` のバージョンが固定されます。これにより、バージョン不一致によるエラーの一般的な原因を防ぎます。
 </details>
 
 ---
 
-### **Option 2: NVIDIA GPU Installation (CUDA)**
+### **オプション2: NVIDIA GPU (CUDA)**
 
-For users with NVIDIA GPUs. This provides the best performance.
-
-**Prerequisite:** Ensure you have the latest NVIDIA drivers installed.
+NVIDIA GPU搭載PC向け。事前に最新ドライバをインストールしてください。
 
 ```bash
-# Make sure your (venv) is active
 pip install --upgrade pip
 pip install -r requirements-nvidia.txt
 ```
 
-**After installation, verify that PyTorch can see your GPU:**
+**インストール後、PyTorchがGPUを認識するか確認：**
 ```bash
 python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'CUDA available: {torch.cuda.is_available()}'); print(f'Device name: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}')"
 ```
-If `CUDA available:` shows `True`, your setup is correct!
+`CUDA available:` が `True` ならセットアップ成功です！
 
 <details>
-<summary><strong>💡 How This Works</strong></summary>
-The `requirements-nvidia.txt` file instructs `pip` to use PyTorch's official CUDA 12.1 package repository. It pins specific, compatible versions of `torch`, `torchvision`, and `torchaudio` that are built with CUDA support. This guarantees that the versions required by `chatterbox-tts` are met with the correct GPU-enabled libraries, preventing conflicts.
+<summary><strong>💡 これはどう動くか</strong></summary>
+`requirements-nvidia.txt` は、`pip` にPyTorchの公式CUDA 12.1パッケージリポジトリを使用するよう指示します。これにより、CUDAサポート付きの `torch` 、 `torchvision` 、 `torchaudio` の特定の互換性のあるバージョンが固定され、 `chatterbox-tts` に必要なバージョンが確実に満たされます。
 </details>
 
 ---
 
-### **Option 3: AMD GPU Installation (ROCm)**
+### **オプション3: AMD GPU (ROCm)**
 
-For users with modern, ROCm-compatible AMD GPUs.
+ROCm対応AMD GPU搭載Linux向け。
 
-**Prerequisite:** Ensure you have the latest ROCm drivers installed on a Linux system.
+**前提:** 最新のROCmドライバがインストールされていること
 
 ```bash
-# Make sure your (venv) is active
 pip install --upgrade pip
 pip install -r requirements-rocm.txt
 ```
 
-**After installation, verify that PyTorch can see your GPU:**
+**インストール後、PyTorchがGPUを認識するか確認：**
 ```bash
 python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'ROCm available: {torch.cuda.is_available()}'); print(f'Device name: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else None}')"
 ```
-If `ROCm available:` shows `True`, your setup is correct!
+`ROCm available:` が `True` ならセットアップ成功です！
 
 <details>
-<summary><strong>💡 How This Works</strong></summary>
-The `requirements-rocm.txt` file works just like the NVIDIA one, but it points `pip` to PyTorch's official ROCm 5.7 package repository. This ensures that the correct GPU-enabled libraries for AMD hardware are installed, providing a stable and performant environment.
+<summary><strong>💡 これはどう動くか</strong></summary>
+`requirements-rocm.txt` は、`pip` にPyTorchの公式ROCm 5.7パッケージリポジトリを指示します。これにより、AMDハードウェア用の正しいGPU対応ライブラリがインストールされ、安定したパフォーマンスが提供されます。
 </details>
 
 ---
 
-### **Option 4: Apple Silicon (MPS) Installation**
+### **オプション4: Apple Silicon (MPS)**
 
-For users with Apple Silicon Macs (M1, M2, M3, etc.).
+Apple Silicon Mac (M1/M2/M3等)向け。macOS 12.3以降が必要です。
 
-**Prerequisite:** Ensure you have macOS 12.3 or later for MPS support.
-
-**Step 1: Install PyTorch with MPS support first**
+**ステップ1: まずPyTorchをMPS対応でインストール
 ```bash
-# Make sure your (venv) is active
 pip install --upgrade pip
 pip install torch torchvision torchaudio
 ```
 
-**Step 2: Configure the server to use MPS**
-Update your `config.yaml` to use MPS instead of CUDA:
-```bash
-# The server will create config.yaml on first run, or you can create it manually
-# Make sure the tts_engine device is set to 'mps'
-```
+**ステップ2: サーバーのMPS設定**
+`config.yaml` を開き、 `device` を `mps` に設定
 
-**Step 3: Install remaining dependencies**
+**ステップ3: 残りの依存をインストール**
 ```bash
-# Install chatterbox-tts without its dependencies to avoid conflicts
+# chatterbox-ttsを依存関係なしでインストール
 pip install --no-deps git+https://github.com/resemble-ai/chatterbox.git
 
-# Install core server dependencies
+# サーバーのコア依存関係をインストール
 pip install fastapi 'uvicorn[standard]' librosa safetensors soundfile pydub audiotsm praat-parselmouth python-multipart requests aiofiles PyYAML watchdog unidecode inflect tqdm
 
-# Install missing chatterbox dependencies
+# 不足しているchatterbox依存関係をインストール
 pip install conformer==0.3.2 diffusers==0.29.0 resemble-perth==1.0.1 transformers==4.46.3
 
-# Install s3tokenizer without its problematic dependencies
+# s3tokenizerを依存関係なしでインストール
 pip install --no-deps s3tokenizer
 
-# Install a compatible version of ONNX
+# ONNXの互換性のあるバージョンをインストール
 pip install onnx==1.16.0
 ```
 
-**Step 4: Configure MPS device**
-Either edit `config.yaml` manually or let the server create it, then modify:
-```yaml
-tts_engine:
-  device: mps  # Changed from 'cuda' to 'mps'
-```
-
-**After installation, verify that PyTorch can see your GPU:**
+**ステップ4: MPSデバイスの確認**
 ```bash
 python -c "import torch; print(f'PyTorch version: {torch.__version__}'); print(f'MPS available: {torch.backends.mps.is_available()}'); print(f'Device will use: {\"mps\" if torch.backends.mps.is_available() else \"cpu\"}')"
 ```
-If `MPS available:` shows `True`, your setup is correct!
+`MPS available:` が `True` ならセットアップ成功です！
 
 <details>
-<summary><strong>💡 Why This Process Is Different</strong></summary>
-Apple Silicon requires a specific installation sequence due to dependency conflicts between the pinned PyTorch versions in chatterbox-tts and the latest PyTorch versions that support MPS. By installing PyTorch first with MPS support, then carefully installing dependencies while avoiding version conflicts, we ensure MPS acceleration works properly. The server's automatic device detection will use MPS when configured and available.
+<summary><strong>💡 この手順が異なる理由</strong></summary>
+Apple Siliconは、依存関係の競合を避けるために、特定のインストール手順を必要とします。最初にPyTorchをMPS対応でインストールし、その後他の依存関係を注意深くインストールすることで、MPSアクセラレーションが正しく機能するようにします。
 </details>
 
 ---
 
-## 🚀 Live Demo - Try It Now! (Google Colab)
+## 🚀 ライブデモ - 今すぐ試そう！ (Google Colab)
 
-**Want to test Chatterbox TTS Server immediately without any installation?**
+**インストール不要ですぐ試したい方はこちら！**
 
 [![Open Live Demo](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/devnen/Chatterbox-TTS-Server/blob/main/Chatterbox_TTS_Colab_Demo.ipynb)
 
-### Why Try the Demo?
-- ✅ **Full Web UI** with all controls and features
-- ✅ **Voice cloning** with uploaded audio files  
-- ✅ **Predefined voices** included
-- ✅ **Large text processing** with chunking (perfect for audiobooks)
-- ✅ **Free GPU acceleration** (T4 GPU)
-- ✅ **No installation** or setup required
-- ✅ **Works on any device** with a web browser
+### デモの利点
+- ✅ **フル機能のWeb UI**
+- ✅ **音声クローン**対応
+- ✅ **内蔵音声**利用可能
+- ✅ **長文処理**（オーディオブック向け）
+- ✅ **無料のGPUアクセラレーション**（T4 GPU）
+- ✅ **インストール不要**
+- ✅ **全デバイス対応**（ブラウザがあればOK）
 
-### Quick Start:
-1. **Click the badge above** to open the notebook in Google Colab
-2. **Select GPU runtime**: Runtime → Change runtime type → T4 GPU → Save
-3. **Run Cell 1**: Click the play button to install dependencies (~1-5 minutes)
-4. **Run Cell 2**: Start the server and access the Web UI via the provided links
-5. **Wait for "Server ready! Click below" message**: Locate the "localhost:8004" link and click. This starts the Web UI in your browser
-6. **Generate speech**: Use the web interface to create high-quality TTS audio
+### クイックスタート:
+1. **バッジをクリック**してノートブックをGoogle Colabで開く
+2. **GPUランタイムを選択**: ランタイム → ランタイムのタイプを変更 → T4 GPU → 保存
+3. **セル1を実行**: 依存関係をインストール（約1〜5分）
+4. **セル2を実行**: サーバーを起動し、表示されるリンクからWeb UIにアクセス
+5. **「Server ready! Click below」メッセージを待つ**: "localhost:8004" リンクをクリック
+6. **Web UIで音声生成**: インターフェースを使って高品質なTTS音声を作成
 
-### Notes:
-- **First run**: Takes a few minutes to download models (one-time only)
-- **Session limits**: Colab free tier has usage limits; sessions may timeout after inactivity
-- **For production**: Use the local installation or Docker deployment methods below
+### 注意事項:
+- **初回実行時**: モデルダウンロードに数分かかる場合があります
+- **セッション制限**: Colab無料枠には使用制限があります
+- **本番環境**: ローカルインストールまたはDocker展開を推奨
 
 ---
 
-*Prefer local installation? Continue reading below for full setup instructions.*
+*ローカルで使いたい場合は下記の手順を参照してください。*
 
-## ⚙️ Configuration
+## ⚙️ 設定
 
-The server relies exclusively on `config.yaml` for runtime configuration.
+サーバーは `config.yaml` のみで設定を管理します。
 
-*   **`config.yaml`:** Located in the project root. This file stores all server settings, model paths, generation defaults, and UI state. It is created automatically on the first run (using defaults from `config.py`) if it doesn't exist. **This is the main file to edit for persistent configuration changes.**
-*   **UI Configuration:** The "Server Configuration" and "Generation Parameters" sections in the Web UI allow direct editing and saving of values *into* `config.yaml`.
+*   **`config.yaml`:** プロジェクトルートにあり、全設定・モデルパス・生成デフォルト・UI状態を保存。初回起動時に自動生成。
+*   **UI設定:** Web UIの「サーバー設定」「生成パラメータ」から直接編集・保存可能。
 
-**Key Configuration Areas (in `config.yaml` or UI):**
+**主な設定項目（`config.yaml` またはUIで編集）：**
 
-*   `server`: `host`, `port`, logging settings.
-*   `model`: `repo_id` (e.g., "ResembleAI/chatterbox").
-*   `tts_engine`: `device` ('auto', 'cuda', 'mps', 'cpu'), `predefined_voices_path`, `reference_audio_path`, `default_voice_id`.
-*   `paths`: `model_cache` (for `download_model.py`), `output`.
-*   `generation_defaults`: Default UI values for `temperature`, `exaggeration`, `cfg_weight`, `seed`, `speed_factor`, `language`.
-*   `audio_output`: `format`, `sample_rate`, `max_reference_duration_sec`.
-*   `ui_state`: Stores the last used text, voice mode, file selections, etc., for UI persistence.
-*   `ui`: `title`, `show_language_select`, `max_predefined_voices_in_dropdown`.
-*   `debug`: `save_intermediate_audio`.
+*   `server`: `host`, `port`, ログ設定
+*   `model`: `repo_id`（例: "ResembleAI/chatterbox"）
+*   `tts_engine`: `device`（'auto', 'cuda', 'mps', 'cpu'）、音声パス等
+*   `paths`: モデルキャッシュ・出力先
+*   `generation_defaults`: 生成パラメータ初期値
+*   `audio_output`: 出力形式・サンプリングレート等
+*   `ui_state`: UIの直近状態
+*   `ui`: タイトル・言語選択表示等
+*   `debug`: 中間音声保存
 
-⭐ **Remember:** Changes made to `server`, `model`, `tts_engine`, or `paths` sections in `config.yaml` (or via the UI's Server Configuration section) **require a server restart** to take effect. Changes to `generation_defaults` or `ui_state` are applied dynamically or on the next page load.
+⭐ **注意:** `server`や`model`等の変更はサーバー再起動が必要です。
 
-## ▶️ Running the Server
+## ▶️ サーバーの起動
 
-**Important Note on Model Downloads (First Run):**
-The very first time you start the server, it needs to download the `chatterbox-tts` model files from Hugging Face Hub. This is an **automatic, one-time process** (per model version, or until your Hugging Face cache is cleared).
+**初回起動時のモデルダウンロードについて：**
 
-*   ⏳ **Please be patient:** This download can take several minutes, depending on your internet speed and the size of the model files (typically a few gigabytes).
-*   📝 **Monitor your terminal:** You'll see progress indicators or logs related to the download. The server will only become fully operational and accessible *after* these essential model files are successfully downloaded and loaded.
-*   ✔️ **Subsequent starts will be much faster** as the server will use the already downloaded models from your local Hugging Face cache.
+初回起動時はHugging Face Hubからモデルファイルを自動ダウンロードします（数GB・数分かかる場合あり）。2回目以降はキャッシュを利用し高速起動。
 
-You can *optionally* use the `python download_model.py` script to pre-download specific model components to the `./model_cache` directory defined in `config.yaml`. However, please note that the runtime engine (`engine.py`) primarily loads the model from the main Hugging Face Hub cache directly, not this specific local `model_cache` directory.
-
-**Steps to Run:**
-
-1.  **Activate the virtual environment (if not activated):**
-    *   Linux/macOS: `source venv/bin/activate`
-    *   Windows: `.\venv\Scripts\activate`
-2.  **Run the server:**
+1.  仮想環境を有効化
+2.  サーバー起動：
     ```bash
     python server.py
     ```
-3.  **Access the UI:** After the server starts (and completes any initial model downloads), it should automatically attempt to open the Web UI in your default browser. If it doesn't, manually navigate to `http://localhost:PORT` (e.g., `http://localhost:8004` if your configured port is 8004).
-4.  **Access API Docs:** Open `http://localhost:PORT/docs` for interactive API documentation.
-5.  **Stop the server:** Press `CTRL+C` in the terminal where the server is running.
+3.  ブラウザで `http://localhost:PORT` にアクセス
+4.  APIドキュメントは `http://localhost:PORT/docs`
+5.  停止は `CTRL+C`
 
-## 🔄 Updating to the Latest Version
+## 🔄 最新版へのアップデート
 
-Follow these steps to update your local installation to the latest version from GitHub. This guide provides two methods: the recommended `git stash` workflow and a manual backup alternative. Both will preserve your local `config.yaml`.
+`git stash`による安全なアップデート方法と、手動バックアップの2通りを紹介します。どちらも`config.yaml`は保持されます。
 
-**First, Navigate to Your Project Directory & Activate Venv**
-
-Before starting, open your terminal, go to the project folder, and activate your virtual environment.
+**1. プロジェクトディレクトリに移動し仮想環境を有効化**
 
 ```bash
 cd Chatterbox-TTS-Server
-
-# On Windows (PowerShell):
+# Windows:
 .\venv\Scripts\activate
-
-# On Linux (Bash):
+# Linux:
 source venv/bin/activate
 ```
 
 ---
 
-### **Method 1: Stash and Pop (Recommended)**
+### **方法1: Stash & Pop（推奨）**
 
-This is the standard and safest way to update using Git. It automatically handles your local changes (like to `config.yaml`) without needing to manually copy files.
-
-*   **Step 1: Stash Your Local Changes**
-    This command safely stores your modifications on a temporary "shelf."
-    ```bash
-    git stash
-    ```
-
-*   **Step 2: Pull the Latest Version**
-    Now that your local changes are safely stored, you can download the latest code from GitHub.
-    ```bash
-    git pull origin main
-    ```
-
-*   **Step 3: Re-apply Your Changes**
-    This command takes your changes from the shelf and applies them back to the updated code.
-    ```bash
-    git stash pop
-    ```
-    Your `config.yaml` will now have your settings, and the rest of the project files will be up-to-date. You can now proceed to the **"Final Steps"** section below.
+```bash
+git stash
+git pull origin main
+git stash pop
+```
 
 ---
 
-### **Method 2: Manual Backup (Alternative)**
+### **方法2: 手動バックアップ**
 
-This method involves manually backing up and restoring your configuration file.
-
-*   **Step 1: Backup Your Configuration**
-    ⚠️ **Important:** Create a backup of your `config.yaml` to preserve your custom settings.
-    ```bash
-    # Create a backup of your current configuration
-    cp config.yaml config.yaml.backup
-    ```
-
-*   **Step 2: Update the Repository**
-    Choose one of the following commands based on your needs:
-    *   **Standard Update (recommended):**
-        ```bash
-        git pull origin main
-        ```
-        If you encounter merge conflicts with `config.yaml`, you may need to resolve them manually.
-    *   **Force Update (if you have conflicts or want to ensure a clean update):**
-        ```bash
-        # Fetch latest changes and reset to match remote exactly
-        git fetch origin
-        git reset --hard origin/main
-        ```
-
-*   **Step 3: Restore Your Configuration**
-    ```bash
-    # Restore your backed-up configuration
-    cp config.yaml.backup config.yaml
-    ```
-    Now, proceed to the **"Final Steps"** section.
+```bash
+cp config.yaml config.yaml.backup
+git pull origin main
+cp config.yaml.backup config.yaml
+```
 
 ---
 
-### **Final Steps (For Both Methods)**
+### **最終ステップ**
 
-After you have updated the code using either method, complete these final steps.
+1. 新しい設定項目が追加されていないか確認
+2. 依存を再インストール（CPU/NVIDIA/AMD用コマンドを選択）
+3. サーバーを再起動
 
-**1. Check for New Configuration Options**
+---
 
-⭐ **Recommended:** Compare your restored `config.yaml` with the new default config to see if there are new options you might want to adopt. The server will add new keys with default values, but you may want to review them.
-
-**2. Update Dependencies**
-
-⭐ **Important:** After pulling new code, always update the dependencies to ensure you have the correct versions. Choose the command that matches your hardware:
-
-*   **For CPU-Only Systems:**
-    ```bash
-    pip install -r requirements.txt
-    ```
-*   **For NVIDIA GPU Systems:**
-    ```bash
-    pip install -r requirements-nvidia.txt
-    ```
-*   **For AMD GPU Systems:**
-    ```bash
-    pip install -r requirements-rocm.txt
-    ```
-
-**3. Restart the Server**
-
-If the server was running, stop it (`CTRL+C`) and restart it to apply all the updates.
-
-```bash
-python server.py
-```
-
-⭐ **Note:** Your custom settings in `config.yaml` are preserved with this method. The server will automatically add any new configuration options with default values if needed. You can safely delete `config.yaml.backup` once you've verified everything works correctly.
-
-⭐ **Docker Users:** If using Docker and you have a local `config.yaml` mounted as a volume, the same backup/restore process applies before running:
-```bash
-docker compose down
-docker compose pull  # if using pre-built images
-docker compose up -d --build
-```
-
-## 💡 Usage
+## 💡 使い方
 
 ### Web UI (`http://localhost:PORT`)
 
-The most intuitive way to use the server:
+*   **テキスト入力:** 台本や本の全文を貼り付けてOK。自動で分割・連結されます。
+*   **音声モード:**
+    *   `Predefined Voices`: 内蔵音声を選択
+    *   `Voice Cloning`: 参照音声ファイルを選択
+*   **プリセット:** `ui/presets.yaml` から例文・設定をロード
+*   **音声管理:** 音声ファイルのインポート・リスト更新
+*   **生成パラメータ:** 温度・誇張・CFG・速度・シード等を調整
+*   **チャンク制御:** 長文時の分割ON/OFF・サイズ調整
+*   **サーバー設定:** `config.yaml`の一部をUIから編集
+*   **音声再生:** 波形付きプレイヤー
 
-*   **Text Input:** Enter your plain text script. **For audiobooks:** Simply paste the entire book text - the chunking system will automatically handle long texts and create seamless audio output.   
-*   **Voice Mode:** Choose:
-    *   `Predefined Voices`: Select a curated voice from the `./voices` directory.
-    *   `Voice Cloning`: Select an uploaded reference file from `./reference_audio`.
-*   **Presets:** Load examples from `ui/presets.yaml`.
-*   **Reference/Predefined Audio Management:** Import new files and refresh lists.
-*   **Generation Parameters:** Adjust Temperature, Exaggeration, CFG Weight, Speed Factor, Seed. Save defaults to `config.yaml`.
-*   **Chunking Controls:** Toggle "Split text into chunks" and adjust "Chunk Size" for long texts.
-*   **Server Configuration:** View/edit parts of `config.yaml` (requires server restart for some changes).
-*   **Audio Player:** Play generated audio with waveform visualization.
+### APIエンドポイント（詳細は `/docs`）
 
-### API Endpoints (`/docs` for interactive details)
+主なエンドポイントは `/tts` です。
 
-The primary endpoint for TTS generation is `/tts`, which offers detailed control over the synthesis process.
+*   **`/tts` (POST):** 音声生成
+    *   **リクエスト:** テキスト・音声モード・内蔵/参照音声・分割・生成パラメータ等
+    *   **レスポンス:** 音声ストリーム
+*   **`/v1/audio/speech` (POST):** OpenAI互換
+*   **補助エンドポイント:** 設定保存・リスト取得・ファイルアップロード等
 
-*   **`/tts` (POST):** Main endpoint for speech generation.
-    *   **Request Body (`CustomTTSRequest`):**
-        *   `text` (string, required): Plain text to synthesize.
-        *   `voice_mode` (string, "predefined" or "clone", default "predefined"): Specifies voice source.
-        *   `predefined_voice_id` (string, optional): Filename of predefined voice (if `voice_mode` is "predefined").
-        *   `reference_audio_filename` (string, optional): Filename of reference audio (if `voice_mode` is "clone").
-        *   `output_format` (string, "wav" or "opus", default "wav").
-        *   `split_text` (boolean, default True): Whether to chunk long text.
-        *   `chunk_size` (integer, default 120): Target characters per chunk.
-        *   `temperature`, `exaggeration`, `cfg_weight`, `seed`, `speed_factor`, `language`: Generation parameters overriding defaults.
-    *   **Response:** Streaming audio (`audio/wav` or `audio/opus`).
-*   **`/v1/audio/speech` (POST):** OpenAI-compatible.
-    *   `input`: Text.
-    *   `voice`: 'S1', 'S2', 'dialogue', 'predefined_voice_filename.wav', or 'reference_filename.wav'.
-    *   `response_format`: 'opus' or 'wav'.
-    *   `speed`: Playback speed factor (0.5-2.0).
-    *   `seed`: (Optional) Integer seed, -1 for random.    
-*   **Helper Endpoints (mostly for UI):**
-    *   `GET /api/ui/initial-data`: Fetches all initial configuration, file lists, and presets for the UI.
-    *   `POST /save_settings`: Saves partial updates to `config.yaml`.
-    *   `POST /reset_settings`: Resets `config.yaml` to defaults.
-    *   `GET /get_reference_files`: Lists files in `reference_audio/`.
-    *   `GET /get_predefined_voices`: Lists formatted voices from `voices/`.
-    *   `POST /upload_reference`: Uploads reference audio files.
-    *   `POST /upload_predefined_voice`: Uploads predefined voice files.
-# 🐳 Docker Installation
+# 🐳 Docker導入
 
-Run Chatterbox TTS Server easily using Docker. The recommended method uses Docker Compose, which is pre-configured for different GPU types.
+Chatterbox TTSサーバーはDockerでも簡単に動作します。ComposeファイルでGPU種別ごとに管理できます。
 
-## Prerequisites
+## 前提条件
 
-*   [Docker](https://docs.docker.com/get-docker/) installed.
-*   [Docker Compose](https://docs.docker.com/compose/install/) installed (usually included with Docker Desktop).
-*   **(For GPU acceleration)**
-    *   **NVIDIA:** Up-to-date drivers and the [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html) installed.
-    *   **AMD:** Up-to-date [ROCm drivers](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/) installed on a Linux host. User must be in `video` and `render` groups.
+*   [Docker](https://docs.docker.com/get-docker/) インストール済み
+*   [Docker Compose](https://docs.docker.com/compose/install/) インストール済み
+*   **(GPU利用時)**
+    *   **NVIDIA:** 最新ドライバ・[NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
+    *   **AMD:** [ROCmドライバ](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/)（Linuxのみ）
 
-## Using Docker Compose (Recommended)
+## Docker Composeの使い方（推奨）
 
-This method uses the provided `docker-compose.yml` files to manage the container, volumes, and configuration easily.
-
-### 1. Clone the Repository
+### 1. リポジトリをクローン
 ```bash
 git clone https://github.com/devnen/Chatterbox-TTS-Server.git
 cd Chatterbox-TTS-Server
 ```
 
-### 2. Start the Container Based on Your Hardware
+### 2. ハードウェアに合わせて起動
 
-#### **For NVIDIA GPU:**
-The default `docker-compose.yml` is configured for NVIDIA GPUs.
+#### **NVIDIA GPU:**
 ```bash
 docker compose up -d --build
 ```
 
-#### **For AMD ROCm GPU (Linux only):**
-**Prerequisites:** Ensure you have [ROCm drivers](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/) installed on your host system and your user is in the required groups:
-```bash
-# Add your user to required groups (one-time setup)
-sudo usermod -a -G video,render $USER
-# Log out and back in for changes to take effect
-```
-
-**Start the container:**
+#### **AMD ROCm GPU (Linuxのみ):**
 ```bash
 docker compose -f docker-compose-rocm.yml up -d --build
 ```
 
-#### **For CPU-only:**
-A dedicated compose file is now provided for CPU-only users to avoid GPU driver errors.
+#### **CPUのみ:**
 ```bash
 docker compose -f docker-compose-cpu.yml up -d --build
 ```
 
-⭐ **Note:** The first time you run this, Docker will build the image and download model files, which can take some time. Subsequent starts will be much faster.
+### 3. アプリにアクセス
+ブラウザで `http://localhost:PORT` へ
 
-### 3. Access the Application
-Open your web browser to `http://localhost:PORT` (e.g., `http://localhost:8004` or the host port you configured).
+### 4. GPU認識確認
 
-### 4. Verify GPU Access
-
-#### **For NVIDIA GPU:**
+#### **NVIDIA GPU:**
 ```bash
-# Check if container can see NVIDIA GPU
 docker compose exec chatterbox-tts-server nvidia-smi
-
-# Verify PyTorch can access the GPU
 docker compose exec chatterbox-tts-server python3 -c "import torch; print(f'CUDA available: {torch.cuda.is_available()}'); print(f'GPU count: {torch.cuda.device_count()}')"
 ```
 
-#### **For AMD ROCm GPU:**
+#### **AMD ROCm GPU:**
 ```bash
-# Check if container can see AMD GPU
 docker compose -f docker-compose-rocm.yml exec chatterbox-tts-server rocm-smi
-
-# Verify PyTorch can access the GPU  
 docker compose -f docker-compose-rocm.yml exec chatterbox-tts-server python3 -c "import torch; print(f'ROCm available: {torch.cuda.is_available()}'); print(f'Device name: {torch.cuda.get_device_name(0) if torch.cuda.is_available() else \"No GPU detected\"}')"
 ```
 
-### 5. View Logs and Manage Container```bash
-# View logs
-docker compose logs -f                                    # For NVIDIA
-docker compose -f docker-compose-rocm.yml logs -f         # For AMD
-docker compose -f docker-compose-cpu.yml logs -f          # For CPU
+### 5. ログ・管理
+```bash
+# ログ確認
+docker compose logs -f                                    # NVIDIA用
+docker compose -f docker-compose-rocm.yml logs -f         # AMD用
+docker compose -f docker-compose-cpu.yml logs -f          # CPU用
 
-# Stop the container
-docker compose down                                       # For NVIDIA
-docker compose -f docker-compose-rocm.yml down            # For AMD
-docker compose -f docker-compose-cpu.yml down             # For CPU
+# コンテナ停止
+docker compose down                                       # NVIDIA用
+docker compose -f docker-compose-rocm.yml down            # AMD用
+docker compose -f docker-compose-cpu.yml down             # CPU用
 
-# Restart the container
-docker compose restart chatterbox-tts-server              # For NVIDIA
-docker compose -f docker-compose-rocm.yml restart chatterbox-tts-server # For AMD
-docker compose -f docker-compose-cpu.yml restart chatterbox-tts-server # For CPU
+# コンテナ再起動
+docker compose restart chatterbox-tts-server              # NVIDIA用
+docker compose -f docker-compose-rocm.yml restart chatterbox-tts-server # AMD用
+docker compose -f docker-compose-cpu.yml restart chatterbox-tts-server # CPU用
 ```
 
-## AMD ROCm Support Details
+## AMD ROCmサポート詳細
 
-### **GPU Architecture Override (Advanced Users)**
+### **GPUアーキテクチャの手動指定（上級者向け）**
 
-If your AMD GPU is not officially supported by ROCm but is similar to a supported architecture, you can override the detected architecture:
+ROCm非公式対応GPUの場合、環境変数でアーキテクチャを上書きできます：
 
 ```bash
-# For RX 5000/6000 series (gfx10xx) - override to gfx1030
+# RX 6000/7000系: gfx1030/1100
 HSA_OVERRIDE_GFX_VERSION=10.3.0 docker compose -f docker-compose-rocm.yml up -d
-
-# For RX 7000 series (gfx11xx) - override to gfx1100  
 HSA_OVERRIDE_GFX_VERSION=11.0.0 docker compose -f docker-compose-rocm.yml up -d
-
-# For Vega cards - override to gfx906
+# Vega系: gfx906
 HSA_OVERRIDE_GFX_VERSION=9.0.6 docker compose -f docker-compose-rocm.yml up -d
 ```
 
-**Check your GPU architecture:**
-```bash
-# Method 1: Using rocminfo (if ROCm installed on host)
-rocminfo | grep "Name:"
+**対応GPU一覧・詳細は公式ドキュメント参照**
 
-# Method 2: Using lspci
-lspci | grep VGA
-```
+## トラブルシューティング
 
-**Common GPU Architecture Mappings:**
-- **RX 7900 XTX/XT, RX 7800 XT, RX 7700 XT:** gfx1100 → Use `HSA_OVERRIDE_GFX_VERSION=11.0.0`
-- **RX 6900 XT, RX 6800 XT, RX 6700 XT, RX 6600 XT:** gfx1030-1032 → Use `HSA_OVERRIDE_GFX_VERSION=10.3.0`
-- **RX 5700 XT, RX 5600 XT:** gfx1010 → Use `HSA_OVERRIDE_GFX_VERSION=10.3.0`
-- **Vega 64, Vega 56:** gfx900-906 → Use `HSA_OVERRIDE_GFX_VERSION=9.0.6`
+*   **NVIDIA GPU:** `nvidia-smi`やContainer Toolkit確認、OOM時は他アプリ終了・チャンクサイズ縮小
+*   **AMD ROCm:** ドライバ・グループ・アーキテクチャ指定確認
+*   **Apple Silicon:** macOS 12.3+・PyTorch/MPS対応バージョン・ONNXバージョン確認
+*   **一般:** ポート競合・依存エラー・権限エラー・ディスク容量等
 
-### **ROCm Compatibility Notes**
+## 設定とボリューム
 
-*   **Supported GPUs:** AMD Instinct data center GPUs and select Radeon GPUs. Check the [ROCm compatibility list](https://rocm.docs.amd.com/projects/install-on-linux/en/latest/reference/system-requirements.html#supported-gpus).
-*   **Operating System:** ROCm is currently supported only on Linux systems.
-*   **Performance:** AMD GPUs with ROCm provide excellent performance for ML workloads, with support for mixed-precision training.
-*   **PyTorch Version:** Uses PyTorch 2.6.0 with ROCm 6.4.1 for optimal compatibility and performance.
+*   **設定:** `config.yaml`をローカルで編集し、再起動で反映
+*   **ボリューム:** 音声・参照音声・出力・ログ・モデルキャッシュ等を永続化
 
-## Troubleshooting
+## 🔍 よくある質問
 
-### **NVIDIA GPU Issues:**
-*   **GPU not detected:** Check `nvidia-smi` works on host, ensure Container Toolkit is installed
-*   **CDI device injection failed:** Open `docker-compose.yml`, comment out the `deploy` section, and uncomment the `runtime: nvidia` line as shown in the file's comments
-*   **CUDA out of memory:** Close other GPU applications, reduce `chunk_size` in the UI for long texts
+*   **Apple Silicon:** MPS認識・依存バージョン・ONNXバージョン・`device: mps`設定
+*   **CUDA未認識/遅い:** ドライバ・PyTorchバージョン確認
+*   **VRAM不足:** GPU要件・他アプリ終了・チャンクサイズ縮小
+*   **Importエラー:** 仮想環境有効化・依存インストール確認
+*   **libsndfileエラー:** `sudo apt install libsndfile1`
+*   **モデルDL失敗:** ネット接続・`model.repo_id`確認
+*   **音声クローン/内蔵音声:** ファイル配置・サーバーログ確認
+*   **権限エラー:** 各ディレクトリの書き込み権限
+*   **UI設定保存不可:** ブラウザキャッシュ・`config.yaml`権限
+*   **ポート競合:** 他プロセス停止・`server.port`変更
+*   **キャンセルボタン:** UI側のみ即時反映、バックエンド推論は停止しません
 
-### **AMD ROCm Issues:**
-*   **GPU not detected:** 
-    - Ensure ROCm drivers are installed on host: `sudo apt install rocm-dkms rocm-libs`
-    - Verify your GPU is ROCm-compatible
-    - Check user groups: `groups $USER` should include `video` and `render`
-*   **Permission errors:** 
-    ```bash
-    sudo usermod -a -G video,render $USER
-    # Log out and back in
-    ```
-*   **Architecture not supported:** Use `HSA_OVERRIDE_GFX_VERSION` override as shown above
-*   **Still having issues:** Uncomment the "Enhanced ROCm Access" section in `docker-compose-rocm.yml`:
-    ```yaml
-    privileged: true
-    cap_add:
-      - SYS_PTRACE
-    devices:
-      - /dev/mem
-    ```
+### 複数GPU環境でのGPU選択
 
-### **General Docker Issues:**
-*   **Port conflict:** Change `PORT` environment variable: `PORT=8005 docker compose up -d`
-*   **Build failures:** Ensure stable internet connection for downloading dependencies
-*   **Permission errors:** Check that Docker daemon is running and user is in `docker` group
-*   **Disk space:** Docker images and model cache can use several GB
+`CUDA_VISIBLE_DEVICES` 環境変数で使用GPUを指定できます。
 
-## Configuration in Docker
-
-*   **Main config:** The server uses `config.yaml` for settings. The docker-compose files mount your local `config.yaml` to `/app/config.yaml` inside the container.
-*   **First run:** If `config.yaml` doesn't exist locally, the application will create a default one with sensible defaults.
-*   **Editing config:** You can edit the local `config.yaml` directly. Changes to server/model/path settings require a container restart:
-    ```bash
-    docker compose restart chatterbox-tts-server
-    ```
-*   **UI settings:** Changes to generation defaults and UI state are often saved automatically by the application.
-
-## Docker Volumes
-
-Persistent data is stored on your host machine via volume mounts:
-
-*   `./config.yaml:/app/config.yaml` - Main application configuration
-*   `./voices:/app/voices` - Predefined voice audio files  
-*   `./reference_audio:/app/reference_audio` - Your uploaded reference audio files for cloning
-*   `./outputs:/app/outputs` - Generated audio files saved from UI/API
-*   `./logs:/app/logs` - Server log files
-*   `hf_cache:/app/hf_cache` - Named volume for Hugging Face model cache (persists downloads)
-
-**Managing volumes:**
-```bash
-# Remove all data (including downloaded models)
-docker compose down -v
-
-# Remove only application data (keep model cache)
-docker compose down
-sudo rm -rf voices/ reference_audio/ outputs/ logs/ config.yaml
-
-# View volume usage
-docker system df
-```
-
-## 🔍 Troubleshooting
-
-*   **Apple Silicon (MPS) Issues:**
-    *   **MPS Not Available:** Ensure you have macOS 12.3+ and an Apple Silicon Mac. Verify with `python -c "import torch; print(torch.backends.mps.is_available())"`
-    *   **Installation Conflicts:** If you encounter version conflicts, follow the exact Apple Silicon installation sequence in Option 3, installing PyTorch first before other dependencies.
-    *   **ONNX Build Errors:** Use the specific ONNX version `pip install onnx==1.16.0` as shown in the installation steps.
-    *   **Model Loading Errors:** Ensure `config.yaml` has `device: mps` in the `tts_engine` section.
-*   **CUDA Not Available / Slow:** Check NVIDIA drivers (`nvidia-smi`), ensure correct CUDA-enabled PyTorch is installed (Installation Step 4).
-*   **VRAM Out of Memory (OOM):**
-    *   Ensure your GPU meets minimum requirements for Chatterbox.
-    *   Close other GPU-intensive applications.
-    *   If processing very long text even with chunking, try reducing `chunk_size` (e.g., 100-150).
-*   **Import Errors (e.g., `chatterbox-tts`, `librosa`):** Ensure virtual environment is active and `pip install -r requirements.txt` completed successfully.
-*   **`libsndfile` Error (Linux):** Run `sudo apt install libsndfile1`.
-*   **Model Download Fails:** Check internet connection. `ChatterboxTTS.from_pretrained()` will attempt to download from Hugging Face Hub. Ensure `model.repo_id` in `config.yaml` is correct.
-*   **Voice Cloning/Predefined Voice Issues:**
-    *   Ensure files exist in the correct directories (`./reference_audio`, `./voices`).
-    *   Check server logs for errors related to file loading or processing.
-*   **Permission Errors (Saving Files/Config):** Check write permissions for `./config.yaml`, `./logs`, `./outputs`, `./reference_audio`, `./voices`, and the Hugging Face cache directory if using Docker volumes.
-*   **UI Issues / Settings Not Saving:** Clear browser cache/local storage. Check browser developer console (F12) for JavaScript errors. Ensure `config.yaml` is writable by the server process.
-*   **Port Conflict (`Address already in use`):** Another process is using the port. Stop it or change `server.port` in `config.yaml` (requires server restart).
-*   **Generation Cancel Button:** This is a "UI Cancel" - it stops the *frontend* from waiting but doesn't instantly halt ongoing backend model inference. Clicking Generate again cancels the previous UI wait.
-
-### Selecting GPUs on Multi-GPU Systems
-
-Set the `CUDA_VISIBLE_DEVICES` environment variable **before** running `python server.py` to specify which GPU(s) PyTorch should see. The server uses the first visible one (effectively `cuda:0` from PyTorch's perspective).
-
-*   **Example (Use only physical GPU 1):**
+*   **例:**
     *   Linux/macOS: `CUDA_VISIBLE_DEVICES="1" python server.py`
     *   Windows CMD: `set CUDA_VISIBLE_DEVICES=1 && python server.py`
     *   Windows PowerShell: `$env:CUDA_VISIBLE_DEVICES="1"; python server.py`
 
-*   **Example (Use physical GPUs 6 and 7 - server uses GPU 6):**
-    *   Linux/macOS: `CUDA_VISIBLE_DEVICES="6,7" python server.py`
-    *   Windows CMD: `set CUDA_VISIBLE_DEVICES=6,7 && python server.py`
-    *   Windows PowerShell: `$env:CUDA_VISIBLE_DEVICES="6,7"; python server.py`
+---
 
-**Note:** `CUDA_VISIBLE_DEVICES` selects GPUs; it does **not** fix OOM errors if the chosen GPU lacks sufficient memory.
-## 🤝 Contributing
+## 🤝 コントリビュート
 
-Contributions are welcome! Please feel free to open an issue to report bugs or suggest features, or submit a Pull Request for improvements.
+バグ報告・機能提案・プルリク大歓迎です！
 
-## 📜 License
+## 📜 ライセンス
 
-This project is licensed under the **MIT License**.
+本プロジェクトは **MITライセンス** です。
 
-You can find it here: [https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
+[https://opensource.org/licenses/MIT](https://opensource.org/licenses/MIT)
 
-## 🙏 Acknowledgements
+## 🙏 謝辞
 
-*   **Core Model:** This project utilizes the **[Chatterbox TTS model](https://github.com/resemble-ai/chatterbox)** by **[Resemble AI](https://www.resemble.ai/)**.
-*   **UI Inspiration:** Special thanks to **[Lex-au](https://github.com/Lex-au)** whose **[Orpheus-FastAPI](https://github.com/Lex-au/Orpheus-FastAPI)** project served as inspiration for the web interface design.
-*   **Similar Project:** This server shares architectural similarities with our [Dia-TTS-Server](https://github.com/devnen/Dia-TTS-Server) project, which uses a different TTS engine.
-*   **Containerization Technologies:** [Docker](https://www.docker.com/) and [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker).
-*   **Core Libraries:**
+*   **コアモデル:** [Chatterbox TTS model](https://github.com/resemble-ai/chatterbox) by [Resemble AI](https://www.resemble.ai/)
+*   **UIインスピレーション:** [Lex-au](https://github.com/Lex-au) の [Orpheus-FastAPI](https://github.com/Lex-au/Orpheus-FastAPI)
+*   **類似プロジェクト:** [Dia-TTS-Server](https://github.com/devnen/Dia-TTS-Server)
+*   **コンテナ技術:** [Docker](https://www.docker.com/), [NVIDIA Container Toolkit](https://github.com/NVIDIA/nvidia-docker)
+*   **主要ライブラリ:**
     *   [FastAPI](https://fastapi.tiangolo.com/)
     *   [Uvicorn](https://www.uvicorn.org/)
     *   [PyTorch](https://pytorch.org/)
@@ -807,4 +568,4 @@ You can find it here: [https://opensource.org/licenses/MIT](https://opensource.o
     *   [SoundFile](https://python-soundfile.readthedocs.io/) & [libsndfile](http://www.mega-nerd.com/libsndfile/)
     *   [Jinja2](https://jinja.palletsprojects.com/)
     *   [WaveSurfer.js](https://wavesurfer.xyz/)
-    *   [Tailwind CSS](https://tailwindcss.com/) (via CDN)
+    *   [Tailwind CSS](https://tailwindcss.com/) (CDN経由)
