@@ -430,12 +430,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             button.className = 'preset-button';
             button.title = `Load '${preset.name}' text and settings`;
             button.textContent = preset.name;
-            button.addEventListener('click', () => applyPreset(preset, true, true));
+            button.addEventListener('click', () => applyPreset(preset));
             presetsContainer.appendChild(button);
         });
     }
 
-    function applyPreset(presetData, showNotif = true, isUserAction = true) {
+    function applyPreset(presetData, showNotif = true) {
         if (!presetData) return;
         if (textArea && presetData.text !== undefined) {
             textArea.value = presetData.text;
@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', async function () {
         }
         if (showNotif) showNotification(`Preset "${presetData.name}" loaded.`, 'info', 3000);
         // Only save the state if this was a direct user click, not an init call.
-        if (isUserAction) {
+        if (isUserInteraction) {
             debouncedSaveState();
         }
     }
@@ -953,7 +953,6 @@ document.addEventListener('DOMContentLoaded', async function () {
             debouncedSaveState();
         } catch (error) {
             console.error(`Error uploading to ${endpoint}:`, error);    
-            if (uploadNotification) uploadNotification.remove();
             if (error.name === 'AbortError') {
                 showNotification(`Upload timeout (2 minutes). File may be too large or server is busy.`, 'error');
             } else {

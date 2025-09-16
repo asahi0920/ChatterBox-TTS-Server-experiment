@@ -467,6 +467,7 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
                 continue
 
             # ファイルサイズチェック（メモリに読み込む前に）
+            file_size = 0
             chunk_size = 8192  # 8KB chunks
             
             # 一時的にファイルサイズを確認
@@ -521,10 +522,10 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
                 else:
                     uploaded_filenames_successfully.append(safe_filename)
                     
-            except Exception as e_validation:
-                # 検証エラーの場合はファイルを保持して警告のみ
-                logger.warning(f"Validation failed for '{safe_filename}': {e_validation}. File saved but may have issues.")
-                uploaded_filenames_successfully.append(safe_filename)
+        except Exception as e_validation:
+            # 検証エラーの場合はファイルを保持して警告のみ
+            logger.warning(f"Validation failed for '{safe_filename}': {e_validation}. File saved but may have issues.")
+            uploaded_filenames_successfully.append(safe_filename)
 
         except Exception as e_upload:
             error_msg = f"Error processing file '{file.filename}': {str(e_upload)}"
@@ -552,7 +553,7 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
         )
     return JSONResponse(content=response_data, status_code=status_code)
 
-
+# filepath: [server.py](http://_vscodecontentref_/0)
 @app.post("/upload_predefined_voice", tags=["File Management"])
 async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
     """
@@ -1071,5 +1072,4 @@ if __name__ == "__main__":
         log_level="info",
         workers=1,
         reload=False,
-    )
     )
