@@ -1,0 +1,79 @@
+@startuml
+actor User
+participant "index.html\nGenerate Speechボタン" as Button
+participant "script.js\nクリックイベント" as ClickHandler
+participant "script.js\nsubmitTTSRequest()" as submitTTSRequest
+participant "script.js\ngetTTSFormData()" as getTTSFormData
+participant "FastAPI\n/ttsエンドポイント" as TTSAPI
+participant "FastAPI\nTTS生成処理" as TTSCore
+participant "script.js\ninitializeWaveSurfer()" as initializeWaveSurfer
+
+== ユーザー操作 ==
+User -> Button : 「Generate Speech」ボタンを押す
+Button -> ClickHandler : クリックイベント発生
+
+== TTSリクエスト準備 ==
+ClickHandler -> submitTTSRequest : submitTTSRequest()呼び出し
+
+activate submitTTSRequest
+submitTTSRequest -> submitTTSRequest : isGenerating = true\n(多重リクエスト防止)
+submitTTSRequest -> submitTTSRequest : showLoadingOverlay()\n(ローディング表示)
+submitTTSRequest -> submitTTSRequest : startTime = performance.now()\n(計測開始)
+submitTTSRequest -> getTTSFormData : getTTSFormData()でフォーム値を集める
+
+activate getTTSFormData
+getTTSFormData -> getTTSFormData : text = textArea.value
+getTTSFormData -> getTTSFormData : temperature = parseFloat(temperatureSlider.value)
+getTTSFormData -> getTTSFormData : exaggeration = parseFloat(exaggerationSlider.value)
+getTTSFormData -> getTTSFormData : cfg_weight = parseFloat(cfgWeightSlider.value)
+getTTSFormData -> getTTSFormData : speed_factor = parseFloat(speedFactorSlider.value)
+getTTSFormData -> getTTSFormData : seed = parseInt(seedInput.value, 10)
+getTTSFormData -> getTTSFormData : language = languageSelect.value
+getTTSFormData -> getTTSFormData : voice_mode = currentVoiceMode
+getTTSFormData -> getTTSFormData : split_text = splitTextToggle.checked
+getTTSFormData -> getTTSFormData : chunk_size = parseInt(chunkSizeSlider.value, 10)
+getTTSFormData -> getTTSFormData : output_format = outputFormatSelect.value
+alt 声モードがpredefined
+    getTTSFormData -> getTTSFormData : predefined_voice_id = predefinedVoiceSelect.value
+else 声モードがclone
+    getTTSFormData -> getTTSFormData : reference_audio_filename = cloneReferenceSelect.value
+end
+getTTSFormData --> submitTTSRequest : jsonData（パラメータまとめたオブジェクト）
+deactivate getTTSFormData
+
+submitTTSRequest -> submitTTSRequest : JSON.stringify(jsonData)
+submitTTSRequest -> TTSAPI : fetch('IS_LOCAL_FILE ? http://localhost:8004/tts', {POST, headers, body: jsonData})
+
+== FastAPIサーバー側 ==
+' server.pyのasync def custom_tts_endpointでengine.synthesize()を呼び出し。engin.pyでdef synthesize()を定義。from chatterbox.tts import ChatterboxTTS  # Main TTS engine class
+activate TTSAPI
+TTSAPI -> TTSCore : パラメータ検証・TTS生成処理
+activate TTSCore
+TTSCore -> TTSCore : 音声合成（モデル推論・音声生成）
+TTSCore -> TTSCore : ファイル保存・レスポンス用データ生成
+TTSCore --> TTSAPI : 音声データ(blob)・ヘッダー情報
+deactivate TTSCore
+TTSAPI --> submitTTSRequest : 音声データ(blob)・Content-Dispositionヘッダー
+deactivate TTSAPI
+
+== クライアント側での処理 ==
+submitTTSRequest -> submitTTSRequest : endTime = performance.now()
+submitTTSRequest -> submitTTSRequest : genTime = (endTime - startTime) / 1000
+submitTTSRequest -> submitTTSRequest : filenameFromServer = response.headers.get('Content-Disposition')
+submitTTSRequest -> submitTTSRequest : resultDetails = { outputUrl, filename, genTime, ... }
+submitTTSRequest -> initializeWaveSurfer : initializeWaveSurfer(outputUrl, resultDetails)
+initializeWaveSurfer -> User : 音声再生UI表示
+
+submitTTSRequest -> submitTTSRequest : showNotification('Audio generated successfully!')
+submitTTSRequest -> submitTTSRequest : isGenerating = false
+submitTTSRequest -> submitTTSRequest : hideLoadingOverlay()
+deactivate submitTTSRequest
+
+== エラーハンドリング ==
+alt エラー発生時
+    submitTTSRequest -> submitTTSRequest : showNotification('Error occurred')
+    submitTTSRequest -> submitTTSRequest : isGenerating = false
+    submitTTSRequest -> submitTTSRequest : hideLoadingOverlay()
+end
+
+@enduml
