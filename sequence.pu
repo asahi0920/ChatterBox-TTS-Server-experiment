@@ -4,8 +4,10 @@ participant "index.html\nGenerate Speechボタン" as Button
 participant "script.js\nクリックイベント" as ClickHandler
 participant "script.js\nsubmitTTSRequest()" as submitTTSRequest
 participant "script.js\ngetTTSFormData()" as getTTSFormData
-participant "FastAPI\n/ttsエンドポイント" as TTSAPI
-participant "FastAPI\nTTS生成処理" as TTSCore
+participant "server.py\n/ttsエンドポイント" as TTSEndpoint
+participant "server.py\ncustom_tts_endpoint()" as CustomTTSEndpoint
+participant "engine.py\nengine.synthesize()" as Engine
+participant "chatterbox.tts\nChatterboxTTS" as ChatterboxTTS
 participant "script.js\ninitializeWaveSurfer()" as initializeWaveSurfer
 
 == ユーザー操作 ==
@@ -42,19 +44,49 @@ getTTSFormData --> submitTTSRequest : jsonData（パラメータまとめたオ�
 deactivate getTTSFormData
 
 submitTTSRequest -> submitTTSRequest : JSON.stringify(jsonData)
-submitTTSRequest -> TTSAPI : fetch('IS_LOCAL_FILE ? http://localhost:8004/tts', {POST, headers, body: jsonData})
+submitTTSRequest -> TTSEndpoint : fetch('http://localhost:8004/tts', {POST, headers, body: jsonData})
 
-== FastAPIサーバー側 ==
-' server.pyのasync def custom_tts_endpointでengine.synthesize()を呼び出し。engin.pyでdef synthesize()を定義。from chatterbox.tts import ChatterboxTTS  # Main TTS engine class
-activate TTSAPI
-TTSAPI -> TTSCore : パラメータ検証・TTS生成処理
-activate TTSCore
-TTSCore -> TTSCore : 音声合成（モデル推論・音声生成）
-TTSCore -> TTSCore : ファイル保存・レスポンス用データ生成
-TTSCore --> TTSAPI : 音声データ(blob)・ヘッダー情報
-deactivate TTSCore
-TTSAPI --> submitTTSRequest : 音声データ(blob)・Content-Dispositionヘッダー
-deactivate TTSAPI
+== FastAPIサーバー側処理 ==
+activate TTSEndpoint
+TTSEndpoint -> CustomTTSEndpoint : async def custom_tts_endpoint()呼び出し
+
+activate CustomTTSEndpoint
+CustomTTSEndpoint -> CustomTTSEndpoint : リクエストパラメータ検証
+CustomTTSEndpoint -> CustomTTSEndpoint : TTSRequestモデルでバリデーション
+CustomTTSEndpoint -> Engine : engine.synthesize()呼び出し
+
+activate Engine
+Engine -> Engine : パラメータ前処理・設定
+Engine -> ChatterboxTTS : ChatterboxTTSインスタンス生成/取得
+activate ChatterboxTTS
+
+alt split_text = true
+    Engine -> Engine : テキストをチャンクに分割
+    loop 各チャンクに対して
+        Engine -> ChatterboxTTS : 音声合成実行（モデル推論）
+        ChatterboxTTS -> ChatterboxTTS : 深層学習モデルでの音声生成
+        ChatterboxTTS --> Engine : 生成された音声セグメント
+    end
+    Engine -> Engine : 音声セグメントを結合
+else split_text = false
+    Engine -> ChatterboxTTS : 全テキストで音声合成実行
+    ChatterboxTTS -> ChatterboxTTS : 深層学習モデルでの音声生成
+    ChatterboxTTS --> Engine : 生成された音声データ
+end
+
+deactivate ChatterboxTTS
+Engine -> Engine : 出力フォーマット変換・後処理
+Engine -> Engine : 一時ファイル保存
+Engine --> CustomTTSEndpoint : 音声ファイルパス・メタデータ
+deactivate Engine
+
+CustomTTSEndpoint -> CustomTTSEndpoint : ファイル読み込み・レスポンス準備
+CustomTTSEndpoint -> CustomTTSEndpoint : Content-Dispositionヘッダー生成
+CustomTTSEndpoint --> TTSEndpoint : StreamingResponse(音声データ, headers)
+deactivate CustomTTSEndpoint
+
+TTSEndpoint --> submitTTSRequest : 音声データ(blob)・Content-Dispositionヘッダー
+deactivate TTSEndpoint
 
 == クライアント側での処理 ==
 submitTTSRequest -> submitTTSRequest : endTime = performance.now()
