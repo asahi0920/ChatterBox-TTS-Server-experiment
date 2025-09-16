@@ -499,15 +499,6 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
             
             # 検証処理をバックグラウンドで実行するオプション
             try:
-                # 検証前にファイルサイズをチェック
-                file_size_mb = destination_path.stat().st_size / (1024 * 1024)
-                logger.info(f"Uploaded file size: {file_size_mb:.1f}MB")
-                
-                max_duration = config_manager.get_int(
-                    "audio_output.max_reference_duration_sec", 30
-                )
-                
-                # 検証処理をより軽量に
                 is_valid, validation_msg = utils.validate_reference_audio(
                     destination_path, max_duration
                 )
@@ -521,11 +512,10 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
                     )
                 else:
                     uploaded_filenames_successfully.append(safe_filename)
-                    
-        except Exception as e_validation:
-            # 検証エラーの場合はファイルを保持して警告のみ
-            logger.warning(f"Validation failed for '{safe_filename}': {e_validation}. File saved but may have issues.")
-            uploaded_filenames_successfully.append(safe_filename)
+            except Exception as e_validation:
+                # 検証でエラーが出ても、ファイル自体は保存して警告として扱う
+                logger.warning(f"Validation error for '{safe_filename}': {e_validation}. File saved but may have issues.")
+                uploaded_filenames_successfully.append(safe_filename)
 
         except Exception as e_upload:
             error_msg = f"Error processing file '{file.filename}': {str(e_upload)}"
@@ -553,7 +543,6 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
         )
     return JSONResponse(content=response_data, status_code=status_code)
 
-# filepath: [server.py](http://_vscodecontentref_/0)
 @app.post("/upload_predefined_voice", tags=["File Management"])
 async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
     """
@@ -577,7 +566,6 @@ async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
         destination_path = predefined_voices_path / safe_filename
 
         try:
-            # ファイル形式チェックを先に実行
             if not (
                 safe_filename.lower().endswith(".wav")
                 or safe_filename.lower().endswith(".mp3")
@@ -594,55 +582,24 @@ async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
                     uploaded_filenames_successfully.append(safe_filename)
                 continue
 
-            # ファイルサイズチェック（メモリに読み込む前に）
-            chunk_size = 8192  # 8KB chunks
-            
-            # 一時的にファイルサイズを確認
-            temp_content = await file.read()
-            file_size_mb = len(temp_content) / (1024 * 1024)
-            
-            if file_size_mb > 50:  # 50MB制限
-                raise ValueError(f"File too large ({file_size_mb:.1f}MB). Maximum size: 50MB")
-            
-            # ファイルポジションをリセット
-            await file.seek(0)
-
-            # チャンク単位でファイルを保存（メモリ効率を改善）
             with open(destination_path, "wb") as buffer:
-                while True:
-                    chunk = await file.read(chunk_size)
-                    if not chunk:
-                        break
-                    buffer.write(chunk)
-            
+                shutil.copyfileobj(file.file, buffer)
             logger.info(
-                f"Successfully saved uploaded predefined voice file to: {destination_path} ({file_size_mb:.1f}MB)"
+                f"Successfully saved uploaded predefined voice file to: {destination_path}"
             )
-
             # Basic validation (can be extended if predefined voices have specific requirements)
-            try:
-                # 検証前にファイルサイズをチェック
-                file_size_mb = destination_path.stat().st_size / (1024 * 1024)
-                logger.info(f"Uploaded predefined voice file size: {file_size_mb:.1f}MB")
-                
-                # 検証処理をより軽量に（predefined voicesは時間制限なし）
-                is_valid, validation_msg = utils.validate_reference_audio(
-                    destination_path, max_duration_sec=None
-                )  # No duration limit for predefined
-                if not is_valid:
-                    logger.warning(
-                        f"Uploaded predefined voice '{safe_filename}' failed basic validation: {validation_msg}. Deleting."
-                    )
-                    destination_path.unlink(missing_ok=True)
-                    upload_errors.append(
-                        {"filename": safe_filename, "error": validation_msg}
-                    )
-                else:
-                    uploaded_filenames_successfully.append(safe_filename)
-                    
-            except Exception as e_validation:
-                # 検証エラーの場合はファイルを保持して警告のみ
-                logger.warning(f"Validation failed for predefined voice '{safe_filename}': {e_validation}. File saved but may have issues.")
+            is_valid, validation_msg = utils.validate_reference_audio(
+                destination_path, max_duration_sec=None
+            )  # No duration limit for predefined
+            if not is_valid:
+                logger.warning(
+                    f"Uploaded predefined voice '{safe_filename}' failed basic validation: {validation_msg}. Deleting."
+                )
+                destination_path.unlink(missing_ok=True)
+                upload_errors.append(
+                    {"filename": safe_filename, "error": validation_msg}
+                )
+            else:
                 uploaded_filenames_successfully.append(safe_filename)
 
         except Exception as e_upload:
@@ -650,10 +607,7 @@ async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
             logger.error(error_msg, exc_info=True)
             upload_errors.append({"filename": file.filename, "error": str(e_upload)})
         finally:
-            try:
-                await file.close()
-            except:
-                pass  # ファイルクローズエラーを無視
+            await file.close()
 
     all_current_predefined_voices = (
         utils.get_predefined_voices()
@@ -672,6 +626,7 @@ async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
             f"Upload to /upload_predefined_voice completed with {len(upload_errors)} error(s)."
         )
     return JSONResponse(content=response_data, status_code=status_code)
+
 
 # --- TTS Generation Endpoint ---
 
