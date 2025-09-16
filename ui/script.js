@@ -929,10 +929,14 @@ document.addEventListener('DOMContentLoaded', async function () {
         const formData = new FormData();
         for (const file of files) formData.append('files', file);
         try {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分に延長
             const response = await fetch(`${API_BASE_URL}${endpoint}`, {
                 method: 'POST',
-                body: formData
+                body: formData,
+                signal: controller.signal
             });
+            clearTimeout(timeoutId);
             const result = await response.json();
             if (uploadNotification) uploadNotification.remove();
             if (!response.ok) throw new Error(result.message || result.detail || `Upload failed with status ${response.status}`);
@@ -948,9 +952,12 @@ document.addEventListener('DOMContentLoaded', async function () {
             successCallback(result);
             debouncedSaveState();
         } catch (error) {
-            console.error(`Error uploading to ${endpoint}:`, error);
-            if (uploadNotification) uploadNotification.remove();
-            showNotification(`Upload Error: ${error.message}`, 'error');
+            console.error(`Error uploading to ${endpoint}:`, error);    
+            if (error.name === 'AbortError') {
+                showNotification(`Upload timeout (2 minutes). File may be too large or server is busy.`, 'error');
+            } else {
+                showNotification(`Upload Error: ${error.message}`, 'error');
+            }
         } finally {
             if (buttonToAnimate) {
                 buttonToAnimate.disabled = false;

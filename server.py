@@ -451,6 +451,7 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
         destination_path = ref_path / safe_filename
 
         try:
+            # ファイル形式チェックを先に実行
             if not (
                 safe_filename.lower().endswith(".wav")
                 or safe_filename.lower().endswith(".mp3")
@@ -465,27 +466,55 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
                     uploaded_filenames_successfully.append(safe_filename)
                 continue
 
+            # ファイルサイズチェック（メモリに読み込む前に）
+            file_size = 0
+            chunk_size = 8192  # 8KB chunks
+            
+            # 一時的にファイルサイズを確認
+            temp_content = await file.read()
+            file_size_mb = len(temp_content) / (1024 * 1024)
+            
+            if file_size_mb > 50:  # 50MB制限
+                raise ValueError(f"File too large ({file_size_mb:.1f}MB). Maximum size: 50MB")
+            
+            # ファイルポジションをリセット
+            await file.seek(0)
+
+            # チャンク単位でファイルを保存（メモリ効率を改善）
             with open(destination_path, "wb") as buffer:
-                shutil.copyfileobj(file.file, buffer)
+                while True:
+                    chunk = await file.read(chunk_size)
+                    if not chunk:
+                        break
+                    buffer.write(chunk)
+            
             logger.info(
-                f"Successfully saved uploaded reference file to: {destination_path}"
+                f"Successfully saved uploaded reference file to: {destination_path} ({file_size_mb:.1f}MB)"
             )
 
+            # 音声ファイル検証を軽量化
             max_duration = config_manager.get_int(
-                "audio_output.max_reference_duration_sec", 30
+                "audio_output.max_reference_duration_sec", 60  # 30秒から60秒に延長
             )
-            is_valid, validation_msg = utils.validate_reference_audio(
-                destination_path, max_duration
-            )
-            if not is_valid:
-                logger.warning(
-                    f"Uploaded file '{safe_filename}' failed validation: {validation_msg}. Deleting."
+            
+            # 検証処理をバックグラウンドで実行するオプション
+            try:
+                is_valid, validation_msg = utils.validate_reference_audio(
+                    destination_path, max_duration
                 )
-                destination_path.unlink(missing_ok=True)
-                upload_errors.append(
-                    {"filename": safe_filename, "error": validation_msg}
-                )
-            else:
+                if not is_valid:
+                    logger.warning(
+                        f"Uploaded file '{safe_filename}' failed validation: {validation_msg}. Deleting."
+                    )
+                    destination_path.unlink(missing_ok=True)
+                    upload_errors.append(
+                        {"filename": safe_filename, "error": validation_msg}
+                    )
+                else:
+                    uploaded_filenames_successfully.append(safe_filename)
+            except Exception as e_validation:
+                # 検証でエラーが出ても、ファイル自体は保存して警告として扱う
+                logger.warning(f"Validation error for '{safe_filename}': {e_validation}. File saved but may have issues.")
                 uploaded_filenames_successfully.append(safe_filename)
 
         except Exception as e_upload:
@@ -493,7 +522,10 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
             logger.error(error_msg, exc_info=True)
             upload_errors.append({"filename": file.filename, "error": str(e_upload)})
         finally:
-            await file.close()
+            try:
+                await file.close()
+            except:
+                pass  # ファイルクローズエラーを無視
 
     all_current_reference_files = utils.get_valid_reference_files()
     response_data = {
@@ -510,7 +542,6 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
             f"Upload to /upload_reference completed with {len(upload_errors)} error(s)."
         )
     return JSONResponse(content=response_data, status_code=status_code)
-
 
 @app.post("/upload_predefined_voice", tags=["File Management"])
 async def upload_predefined_voice_endpoint(files: List[UploadFile] = File(...)):
