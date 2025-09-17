@@ -489,7 +489,7 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
 
             # 音声ファイルの検証
             max_duration = config_manager.get_int(
-                "audio_output.max_reference_duration_sec", 30
+                "audio_output.max_reference_duration_sec", 0
             )
             is_valid, validation_msg = utils.validate_reference_audio(
                 destination_path, max_duration
@@ -727,7 +727,7 @@ async def custom_tts_endpoint(
                 status_code=404,
                 detail=f"Reference audio file '{request.reference_audio_filename}' not found.",
             )
-        max_dur = config_manager.get_int("audio_output.max_reference_duration_sec", 30)
+        max_dur = config_manager.get_int("audio_output.max_reference_duration_sec", 0)
         is_valid, msg = utils.validate_reference_audio(potential_path, max_dur)
         if not is_valid:
             raise HTTPException(
