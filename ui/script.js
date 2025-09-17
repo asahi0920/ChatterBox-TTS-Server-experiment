@@ -920,44 +920,35 @@ document.addEventListener('DOMContentLoaded', async function () {
     async function handleFileUpload(fileInput, endpoint, successCallback, buttonToAnimate) {
         const files = fileInput.files;
         if (!files || files.length === 0) return;
-        const originalButtonHTML = buttonToAnimate ? buttonToAnimate.innerHTML : '';
-        if (buttonToAnimate) {
-            buttonToAnimate.innerHTML = `<svg class="animate-spin h-5 w-5 mr-1.5 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Uploading...`;
-            buttonToAnimate.disabled = true;
-        }
-        const uploadNotification = showNotification(`Uploading ${files.length} file(s)...`, 'info', 0);
+
         const formData = new FormData();
         for (const file of files) formData.append('files', file);
+
+        const originalButtonHTML = buttonToAnimate ? buttonToAnimate.innerHTML : '';
+        if (buttonToAnimate) {
+            buttonToAnimate.disabled = true;
+            buttonToAnimate.innerHTML = 'Uploading...';
+        }
+
         try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 120000); // 2分に延長
-            const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-                method: 'POST',
-                body: formData,
-                signal: controller.signal
-            });
-            clearTimeout(timeoutId);
-            const result = await response.json();
-            if (uploadNotification) uploadNotification.remove();
-            if (!response.ok) throw new Error(result.message || result.detail || `Upload failed with status ${response.status}`);
-            if (result.errors && result.errors.length > 0) {
-                result.errors.forEach(err => showNotification(`Upload Warning: ${err.filename || 'File'} - ${err.error}`, 'warning', 10000));
+            const res = await fetch(`${API_BASE_URL}${endpoint}`, { method: 'POST', body: formData });
+            const result = await res.json().catch(() => ({}));
+
+            if (!res.ok) {
+                const errs = (result && result.errors) ? result.errors : [];
+                const details = errs.map(e => `${e.filename || ''}: ${e.error || ''}`).join('\n') || (result.detail || res.statusText);
+                console.error(`Upload failed:`, result);
+                showNotification(`Upload failed (${res.status}).\n${details}`, 'error');
+                return;
             }
-            const successfulUploads = result.uploaded_files || [];
-            if (successfulUploads.length > 0) {
-                showNotification(`Successfully uploaded: ${successfulUploads.join(', ')}`, 'success');
-            } else if (!result.errors || result.errors.length === 0) {
-                showNotification("Files processed. No new valid files were added or an issue occurred.", 'info');
-            }
-            successCallback(result);
-            debouncedSaveState();
-        } catch (error) {
-            console.error(`Error uploading to ${endpoint}:`, error);    
-            if (error.name === 'AbortError') {
-                showNotification(`Upload timeout (2 minutes). File may be too large or server is busy.`, 'error');
-            } else {
-                showNotification(`Upload Error: ${error.message}`, 'error');
-            }
+
+            // 成功パス
+            const uploaded = (result && result.uploaded_files) ? result.uploaded_files : [];
+            showNotification(`Uploaded: ${uploaded.join(', ') || '(none)'}`, 'success');
+            if (typeof successCallback === 'function') successCallback(result);
+        } catch (err) {
+            console.error(`Error uploading to ${endpoint}:`, err);
+            showNotification(`Upload error: ${err.message}`, 'error');
         } finally {
             if (buttonToAnimate) {
                 buttonToAnimate.disabled = false;
