@@ -487,10 +487,10 @@ async def upload_reference_audio_endpoint(files: List[UploadFile] = File(...)):
                 f"Successfully saved uploaded reference file to: {destination_path}"
             )
 
-            # 音声ファイルの検証
-            max_duration = config_manager.get_int(
-                "audio_output.max_reference_duration_sec", 0
-            )
+            # 長さ上限：0以下なら無制限にする
+            cfg_val = config_manager.get_int("audio_output.max_reference_duration_sec", 0)
+            max_duration = None if cfg_val is None or cfg_val <= 0 else cfg_val
+    
             is_valid, validation_msg = utils.validate_reference_audio(
                 destination_path, max_duration
             )
